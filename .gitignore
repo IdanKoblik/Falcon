@@ -1,6 +1,7 @@
 # Local
 falcon.iso
 isodir/
+falcon-x86_32.bin
 
 # Prerequisites
 *.d
