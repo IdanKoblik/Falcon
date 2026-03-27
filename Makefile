@@ -7,6 +7,7 @@ LD = ld
 # -fno-stack-protector: Required for kernels without a libs
 CFLAGS = -m32 -ffreestanding -O2 -Wall -Wextra \
 	-fno-stack-protector \
+	-mno-mmx -mno-sse -mno-sse2 \
 	-MMD -MP
 ASFLAGS = -f elf32
 LDFLAGS = -m elf_i386 -n -T linker.ld
@@ -24,7 +25,7 @@ FINAL_OBJS := $(BOOT_OBJ) $(OTHER_OBJS)
 
 DEPS := $(FINAL_OBJS:.o=.d)
 
-.PHONY: all clean run
+.PHONY: all clean run debug
 
 all: $(ISO)
 
@@ -32,7 +33,7 @@ $(ISO): $(KERNEL)
 	@mkdir -p isodir/boot/grub
 	cp $(KERNEL) isodir/boot/
 	cp grub.cfg isodir/boot/grub/
-	grub2-mkrescue -o $(ISO) isodir
+	grub-mkrescue -o $(ISO) isodir
 
 $(KERNEL): $(FINAL_OBJS)
 	$(LD) $(LDFLAGS) -o $@ $(FINAL_OBJS)
@@ -49,6 +50,9 @@ clean:
 	find kernel -name '*.d' -delete
 
 run: $(ISO)
-	qemu-system-i386 -cdrom $(ISO)
+	qemu-system-i386 -cdrom $(ISO) -no-reboot -display gtk -name "Falcon OS"
+
+debug: $(ISO)
+	qemu-system-i386 -cdrom $(ISO) -no-reboot -display gtk -name "Falcon OS" -d int,cpu_reset 2>&1 | tee /tmp/falcon-debug.log
 
 -include $(DEPS)

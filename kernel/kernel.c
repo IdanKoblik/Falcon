@@ -22,7 +22,8 @@ void kmain(uint32_t magic, uint32_t addr) {
         while (1);
     }
 
-    vga_print("Falcon (x86_32)\n===============\n\n");
+    vga_color_print(" FALCON OS  |  x86-32                                                           \n", 0x1F);
+    vga_print("\n");
     print_info(magic, addr);
 
     pmm_init(addr);

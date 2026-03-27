@@ -41,10 +41,11 @@ void run_memory_tests(void) {
 
     // kmalloc
     void *a = kmalloc(32);
-    if (a)
-        pass("kmalloc basic allocation");
-    else
-        fail("kmalloc returned NULL");
+    if (!a) {
+        fail("kmalloc basic allocation");
+        return;
+    }
+    pass("kmalloc basic allocation");
 
     uint32_t* p = (uint32_t*)a;
     p[0] = 0xDEADBEEF;
